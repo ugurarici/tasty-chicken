@@ -82,7 +82,9 @@ class ArticleController extends Controller
      */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        //
+        $article->update($request->validated());
+
+        return redirect()->back();
     }
 
     /**
