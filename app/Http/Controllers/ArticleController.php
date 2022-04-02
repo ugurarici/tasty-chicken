@@ -10,6 +10,18 @@ use Inertia\Inertia;
 class ArticleController extends Controller
 {
     /**
+     * Constructor.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->authorizeResource(Article::class);
+    }
+
+
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -95,10 +107,6 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        if (
-            auth()->user()->cant('delete', $article)
-        ) return abort(403);
-
         $article->delete();
 
         return redirect()->route('articles.index');
