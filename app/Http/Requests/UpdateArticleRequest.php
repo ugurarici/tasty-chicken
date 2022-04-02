@@ -15,9 +15,10 @@ class UpdateArticleRequest extends FormRequest
      */
     public function authorize()
     {
-        $article = $this->route('article');
-
-        return $article && $article->user_id === auth()->id();
+        return auth()->user()->can(
+            'update',
+            $this->route('article')
+        );
     }
 
     /**
