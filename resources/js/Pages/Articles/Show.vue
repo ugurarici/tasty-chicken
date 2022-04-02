@@ -6,9 +6,15 @@
           {{ article.title }}
         </h2>
         <div v-if="article.user_id == $page.props.user.id">
-          <jet-secondary-button @click.prevent="editing = !editing">
+          <jet-secondary-button
+            @click.prevent="editing = !editing"
+            class="mr-3"
+          >
             Edit
           </jet-secondary-button>
+          <jet-danger-button @click.prevent="deleting = true">
+            Delete
+          </jet-danger-button>
         </div>
       </div>
     </template>
@@ -23,6 +29,7 @@
             {{ article.body }}
           </div>
         </div>
+        <!-- Edit Form -->
         <jet-form-section v-else @submitted="submitForm">
           <template #title> Update Article </template>
 
@@ -87,6 +94,30 @@
             </jet-button>
           </template>
         </jet-form-section>
+
+        <!-- Delete Article Confirmation Modal -->
+        <jet-dialog-modal :show="deleting" @close="deleting = false">
+          <template #title> Delete Article </template>
+
+          <template #content>
+            Are you sure you want to delete this article?
+          </template>
+
+          <template #footer>
+            <jet-secondary-button @click="deleting = false">
+              Cancel
+            </jet-secondary-button>
+
+            <jet-danger-button
+              class="ml-3"
+              @click="deleteArticle"
+              :class="{ 'opacity-25': deleteForm.processing }"
+              :disabled="deleteForm.processing"
+            >
+              Delete Article
+            </jet-danger-button>
+          </template>
+        </jet-dialog-modal>
       </div>
     </div>
   </app-layout>
@@ -104,6 +135,7 @@ import JetLabel from "@/Jetstream/Label.vue";
 import JetActionMessage from "@/Jetstream/ActionMessage.vue";
 import JetSecondaryButton from "@/Jetstream/SecondaryButton.vue";
 import JetDangerButton from "@/Jetstream/DangerButton.vue";
+import JetDialogModal from "@/Jetstream/DialogModal.vue";
 
 export default defineComponent({
   props: ["article"],
@@ -117,14 +149,17 @@ export default defineComponent({
     JetActionMessage,
     JetSecondaryButton,
     JetDangerButton,
+    JetDialogModal,
   },
   data() {
     return {
+      deleting: false,
       editing: false,
       form: this.$inertia.form({
         title: this.article.title,
         body: this.article.body,
       }),
+      deleteForm: this.$inertia.form({}),
     };
   },
   methods: {
@@ -137,6 +172,9 @@ export default defineComponent({
           this.editing = false;
         },
       });
+    },
+    deleteArticle() {
+      this.deleteForm.delete(this.route("articles.destroy", this.article));
     },
   },
 });
