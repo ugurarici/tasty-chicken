@@ -30,7 +30,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Articles/Create');
     }
 
     /**
@@ -41,7 +41,14 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request)
     {
-        //
+        $article = Article::create(
+            array_merge(
+                $request->validated(),
+                ['user_id' => auth()->id()]
+            )
+        );
+
+        return redirect()->route('articles.show', $article);
     }
 
     /**
