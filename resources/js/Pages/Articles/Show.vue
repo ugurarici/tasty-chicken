@@ -5,14 +5,19 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
           {{ article.title }}
         </h2>
-        <div v-if="article.user_id == $page.props.user.id">
+        <div>
           <jet-secondary-button
             @click.prevent="editing = !editing"
-            class="mr-3"
+            v-if="permissions.update"
           >
             Edit
           </jet-secondary-button>
-          <jet-danger-button @click.prevent="deleting = true">
+
+          <jet-danger-button
+            @click.prevent="deleting = true"
+            class="ml-3"
+            v-if="permissions.delete"
+          >
             Delete
           </jet-danger-button>
         </div>
@@ -138,7 +143,7 @@ import JetDangerButton from "@/Jetstream/DangerButton.vue";
 import JetDialogModal from "@/Jetstream/DialogModal.vue";
 
 export default defineComponent({
-  props: ["article"],
+  props: ["article", "permissions"],
   components: {
     AppLayout,
     JetButton,

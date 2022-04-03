@@ -71,7 +71,11 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        return Inertia::render('Articles/Show', compact('article'));
+        $permissions = [
+            'update' => auth()->user()->can('update', $article),
+            'delete' => auth()->user()->can('delete', $article),
+        ];
+        return Inertia::render('Articles/Show', compact('article', 'permissions'));
     }
 
     /**
